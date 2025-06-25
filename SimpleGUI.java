@@ -4,19 +4,29 @@ import java.awt.event.*;
 import java.io.*;
 import java.nio.file.*;
 
-public class SimpleGUI {
+public class SimpleGUI extends JFrame {
+
     private OrcamentoService orcamentoService = new OrcamentoService();
 
-    public void exibir() {
-        JFrame frame = new JFrame("Sistema de Orçamentos");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(500, 300);
-        frame.setLayout(new BorderLayout(10, 10));
+    public SimpleGUI() {
+        
+        this.setTitle("Sistema de Orçamentos");
+        this.setResizable(false);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setSize(500, 300);
+        this.setLayout(new BorderLayout(10, 10));
+
+        setup();
+        
+    }
+
+    private void setup() {
 
         JPanel topo = new JPanel(new GridLayout(2, 1));
         JLabel titulo = new JLabel("Sistema de Orçamentos", SwingConstants.CENTER);
         titulo.setFont(new Font("Arial", Font.BOLD, 18));
         JLabel descricao = new JLabel("Permite criar, salvar e consultar orçamentos por cliente.", SwingConstants.CENTER);
+        
         topo.add(titulo);
         topo.add(descricao);
 
@@ -43,16 +53,16 @@ public class SimpleGUI {
         resultadoArea.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(resultadoArea);
 
-        frame.add(topo, BorderLayout.NORTH);
-        frame.add(centro, BorderLayout.CENTER);
-        frame.add(scrollPane, BorderLayout.SOUTH);
+        this.add(topo, BorderLayout.NORTH);
+        this.add(centro, BorderLayout.CENTER);
+        this.add(scrollPane, BorderLayout.SOUTH);
 
         botaoGerar.addActionListener(e -> {
             String cliente = campoCliente.getText().trim();
             String valorTexto = campoValor.getText().trim();
 
             if (cliente.isEmpty() || valorTexto.isEmpty()) {
-                JOptionPane.showMessageDialog(frame, "Preencha todos os campos.");
+                JOptionPane.showMessageDialog(this, "Preencha todos os campos.");
                 return;
             }
 
@@ -60,11 +70,11 @@ public class SimpleGUI {
                 double valor = Double.parseDouble(valorTexto);
                 Orcamento orcamento = new Orcamento(cliente, valor);
                 orcamentoService.salvarOrcamento(orcamento);
-                JOptionPane.showMessageDialog(frame, "Orçamento salvo com sucesso.");
+                JOptionPane.showMessageDialog(this, "Orçamento salvo com sucesso.");
                 campoCliente.setText("");
                 campoValor.setText("");
             } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(frame, "Valor inválido.");
+                JOptionPane.showMessageDialog(this, "Valor inválido.");
             }
         });
 
@@ -79,14 +89,14 @@ public class SimpleGUI {
         botaoExcluir.addActionListener(e -> {
     String clienteExcluir = campoExcluir.getText().trim();
     if (clienteExcluir.isEmpty()) {
-        JOptionPane.showMessageDialog(frame, "Informe o nome do cliente para excluir.");
+        JOptionPane.showMessageDialog(this, "Informe o nome do cliente para excluir.");
         return;
     }
 
     try {
         Path caminho = Path.of("orcamentos.txt");
         if (!Files.exists(caminho)) {
-            JOptionPane.showMessageDialog(frame, "Arquivo de orçamentos não encontrado.");
+            JOptionPane.showMessageDialog(this, "Arquivo de orçamentos não encontrado.");
             return;
         }
 
@@ -107,18 +117,18 @@ public class SimpleGUI {
         campoExcluir.setText("");
 
         if (encontrado) {
-            JOptionPane.showMessageDialog(frame, "Orçamento excluído com sucesso.");
+            JOptionPane.showMessageDialog(this, "Orçamento excluído com sucesso.");
         } else {
-            JOptionPane.showMessageDialog(frame, "Cliente não encontrado.");
+            JOptionPane.showMessageDialog(this, "Cliente não encontrado.");
         }
 
     } catch (IOException ex) {
         ex.printStackTrace();
-        JOptionPane.showMessageDialog(frame, "Erro ao tentar excluir.");
+        JOptionPane.showMessageDialog(this, "Erro ao tentar excluir.");
     }
 });
 
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
+        this.setLocationRelativeTo(null);
+        this.setVisible(true);
     }
 }
